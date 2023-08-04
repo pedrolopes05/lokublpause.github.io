@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minuteur de Pause</title>
+    <title>Minuteur de Test</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,19 +26,26 @@
 </head>
 <body>
     <div id="minuteur"></div>
+    <audio id="alarme" src="alarme.mp3"></audio> <!-- Assurez-vous d'avoir un fichier alarme.mp3 dans le même répertoire -->
     <script>
-        var secondes = 14 * 60;
+        var duree = 15 * 1000; // 15 secondes en millisecondes
+        var fin = new Date().getTime() + duree;
 
         function actualiserMinuteur() {
-            var minutes = Math.floor(secondes / 60);
-            var restantes = secondes % 60;
-            document.getElementById('minuteur').innerText = minutes + ":" + (restantes < 10 ? "0" : "") + restantes;
+            var maintenant = new Date().getTime();
+            var distance = fin - maintenant;
+            var secondes = Math.floor(distance / 1000);
+            document.getElementById('minuteur').innerText = "0:" + (secondes < 10 ? "0" : "") + secondes;
+
+            // Si le minuteur est fini, joue l'alarme
+            if (distance < 0) {
+                document.getElementById('minuteur').innerText = "Terminé!";
+                document.getElementById('alarme').play();
+                clearInterval(interval);
+            }
         }
 
-        setInterval(function() {
-            actualiserMinuteur();
-            if (secondes > 0) secondes--;
-        }, 1000);
+        var interval = setInterval(actualiserMinuteur, 1000);
 
         actualiserMinuteur();
     </script>
